@@ -1,0 +1,138 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 23.05.1 ] */
+/* [wxMaxima: input   start ] */
+/* Definicja funkcji */
+        f(x) := (%e^x)/x$;
+        print("Funkcja: ",f(x))$;
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+/* Obliczanie dziedziny */
+        Dziedzina: solve([denom(f(x)) != 0], x)$;
+        print("Dziedzina: ",Dziedzina)$;
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+/* Asymptota pionowa */
+		asymptota_pionowa_plus : limit(f(x), x, 0, plus)$;
+		print("Granica dla x -> 0 z prawej: ", asymptota_pionowa_plus)$;
+		
+		asymptota_pionowa_minus : limit(f(x), x, 0, minus)$;
+		print("Granica dla x -> 0 z lewej: ", asymptota_pionowa_minus)$;
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+/* Asymptota pozioma */
+		asymptota_pozioma_plus_inf : limit(f(x), x, inf)$;
+		print("Granica dla x -> +inf: ", asymptota_pozioma_plus_inf)$;
+		
+		asymptota_pozioma_minus_inf : limit(f(x), x, minf)$;
+		print("Granica dla x -> -inf: ", asymptota_pozioma_minus_inf)$;
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+/*Asymptota ukośna*/
+/* Obliczenie współczynnika a */
+		a : limit(f(x)/x, x, inf)$;
+		print("Współczynnika a asymptoty ukośnej: ", a)$;
+		
+		/* Obliczenie współczynnika b */
+		b : limit(f(x) - a * x, x, inf)$;
+		print("Współczynnika b asymptoty ukośnej: ", b)$;
+		print("Równanie asymptoty ukośnej: y = ", a, "* x + ", b)$;
+		/*Zatem widać, że nie istnieje asymptota ukośna*/
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+/* Obliczenie miejsca zerowego funkcji */
+    Miejsce_zerowe : solve(f(x) = 0, x)$;
+    print("Miejscem zerowym funkcji jest: ",Miejsce_zerowe)$;
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+/* Obliczenie pochodnej */
+    df : diff(f(x), x)$;
+    print("Pochodna funkcji jest równa f'(x)= ",df)$;
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+/* Znalezienie miejsc zerowych pochodnej (potencjalne ekstremum) */
+    punkt_extremum : solve(df = 0, x)$;
+        
+/* Wyodrębnienie wartości z równań */
+    wartość_argumentu : map(rhs, punkt_extremum)$;
+        
+/* Obliczenie wartości funkcji w potencjalnych ekstremach */
+    wartosc_extremum : map(f, wartość_argumentu)$;
+        
+/* Sprawdzanie rodzaju ekstremum w punktach krytycznych */
+    for punkt in punkt_extremum do (
+    x0 : rhs(punkt),
+    if  at(df, x = x0 - 0.01) < 0 and at(df, x = x0 + 0.01) > 0 then(
+    print("Punkt krytyczny x =", x0, "jest minimum lokalnym, f(x) =", f(x),"i ma wartość y=",wartosc_extremum))
+    else if at(df, x = x0 - 0.01) > 0 and at(df, x = x0 + 0.01) < 0 then (
+    print("Punkt krytyczny x =", x0, "jest maksimum lokalnym, f(x) =", f(x),"i ma wartość y=",wartosc_extremum)))$;
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+/*Sprawdzanie znaku funkcji*/
+        Nierownosc_licznik_wiekszy_od_zera: %e^x>0$;
+        print("Czy nierówność",Nierownosc_licznik_wiekszy_od_zera," jest prawdziwa?")$;
+        Czy_prawdziwa:is(Nierownosc_licznik_wiekszy_od_zera)$;
+        print(Czy_prawdziwa)$;
+        print("Sprawdziliśmy, że ",Nierownosc_licznik_wiekszy_od_zera," jest prawdziwa zatem znak funkcji zależy od znaku x")$;
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+/* Tworzenie wykresu */
+		draw2d(
+		title = "Wykres funkcji f(x) = e^x/x i jej wlasnosci",
+		xlabel = "x",
+		ylabel = "y",
+		
+		/* Wykres funkcji f(x) linią niebieską */
+		color = blue,
+		key = "Funkcja f(x) = e^x/x",
+		explicit(f(x), x, -5, 5),
+		
+		/* Punkt (1, e) czerwoną kropką jako ekstremum minimalne */
+		color = red,
+		point_type = filled_circle,
+		key = "Ekstremum minimalne lokalne w (1,e)",
+		points([[1, exp(1)]]),
+		
+		/* Linia przerywana zielona x = 0 */
+		color = green,
+		line_type = 2, /* Typ linii przerywana(2) */
+		key = "Asymptota pionowa x = 0",
+		implicit(x = 0, x, -5, 5, y, -10, 10), /* Rysowanie pionowej linii x = 0 */
+		
+		/* Wykres funkcji g(x) kropkowaną linią cyjanową jako pochodna */
+		color = cyan,
+		line_type = 3, /* Typ linii kropkowany(3) */
+		key = "Pochodna df(x)=e^x/x-e^x/x^2 ",
+		line_width = 1.5, /* Grubsza linia */
+		explicit(df, x, -5, 5),
+		
+		/* Dodanie osi x i y */
+		xaxis = true,
+		yaxis = true,
+		
+		/* Ustawienie zakresów osi x i y */
+		xrange = [-5, 5],
+		yrange = [-10, 10]);
+/* [wxMaxima: input   end   ] */
+
+
+
+/* Old versions of Maxima abort on loading files that end in a comment. */
+"Created with wxMaxima 23.05.1"$
